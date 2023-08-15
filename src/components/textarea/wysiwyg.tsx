@@ -2,7 +2,7 @@ import { Link } from '@tiptap/extension-link';
 import { Placeholder } from '@tiptap/extension-placeholder';
 import { EditorContent, useEditor, type Editor } from '@tiptap/react';
 import { StarterKit } from '@tiptap/starter-kit';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
@@ -126,12 +126,13 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
     onBlur,
     onChange,
     name = '',
-    value = '',
+    value: initialValue = '',
 }) => {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [editorContent, setEditorContent] = useState(initialValue);
     const editor = useEditor(
         {
-            content: value,
+            content: editorContent,
             editable: !disabled,
             extensions: [
                 StarterKit,
@@ -145,14 +146,21 @@ export const TextareaWYSIWYG: React.FC<TextareaWYSIWYGProps> = ({
                     onBlur(editor.getHTML());
                 }
             },
-            onUpdate: ({ editor }) => {
-                if (onChange) {
-                    onChange(editor.getHTML());
-                }
+
+            onUpdate({ editor }) {
+                setEditorContent(editor.getHTML());
             },
         },
         [disabled],
     );
+
+    // Listen for changes to the editorContent and call the 'onChange' prop
+    useEffect(() => {
+        if (editorContent) {
+            onChange?.(editorContent);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editorContent]);
 
     const body = document.querySelector('body');
 
