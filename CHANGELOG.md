@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Fixed
+
+-   Properly export ESM/CJS library depending on current environment
+
 ### Added
 
 -   Implement `Link` component
